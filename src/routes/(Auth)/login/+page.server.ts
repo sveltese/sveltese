@@ -5,6 +5,11 @@ import { loginSchema } from '$lib/schemas'
 import { log } from 'node:console'
 
 export const load = async (event) => {
+	const session = await event.locals.auth.validate()
+	if (session) {
+		throw redirect(303, '/dashboard')
+	}
+
 	const form = await superValidate(event, loginSchema)
 	return { form }
 }
@@ -21,7 +26,7 @@ export const actions = {
 		try {
 			const username = form.data.email
 			const password = form.data.password
-			log(username, password)
+
 			const key = await auth.useKey('email', username, password)
 			log(key)
 			const session = await auth.createSession(key.userId)

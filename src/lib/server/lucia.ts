@@ -14,7 +14,10 @@ export const auth = lucia({
 			name: databaseUser.name
 		}
 	},
-	middleware: sveltekit()
+	middleware: sveltekit(),
+	experimental: {
+		debugMode: true
+	}
 })
 
 export type Auth = typeof auth

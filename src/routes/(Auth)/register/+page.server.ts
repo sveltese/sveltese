@@ -8,6 +8,10 @@ import { createHash, randomBytes } from 'node:crypto'
 import { registerSchema } from '$lib/schemas'
 
 export const load = async (event) => {
+	const session = await event.locals.auth.validate()
+	if (session) {
+		throw redirect(303, '/dashboard')
+	}
 	const form = await superValidate(event, registerSchema)
 	return { form }
 }
@@ -21,13 +25,13 @@ export const actions = {
 		}
 
 		// encrypt password
-		const hash = await createHash('sha256').update(form.data?.password).digest('hex')
+		// const hash = await createHash('sha256').update(form.data?.password).digest('hex')
 		try {
 			await auth.createUser({
 				primaryKey: {
 					providerId: 'email',
 					providerUserId: form.data.email,
-					password: hash
+					password: form.data.password
 				},
 				attributes: {
 					email: form.data.email,
