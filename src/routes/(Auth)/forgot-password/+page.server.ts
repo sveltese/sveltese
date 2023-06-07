@@ -5,30 +5,12 @@ import { prisma } from '$lib/server/prisma'
 import { emailClient } from '$lib/server/email'
 import ResetPasswordEmail from '$lib/emails/ResetPasswordEmail.svelte'
 import { createHash, randomBytes } from 'node:crypto'
-
-const forgotPasswordSchema = z.object({
-	email: z
-		.string()
-		.email("Email doesn't look right.")
-		.refine(async (email) => {
-			if (!email) return true
-			return await findUserByEmail(email)
-		}, 'This email is not in our database.')
-})
+import { forgotPasswordSchema } from '$lib/schemas.js'
+import { findUserByEmail } from '$lib/utils.js'
 
 export const load = async (event) => {
 	const form = await superValidate(event, forgotPasswordSchema)
 	return { form }
-}
-
-async function findUserByEmail(email: string) {
-	const user = await prisma.users.findUnique({
-		where: {
-			email: email
-		}
-	})
-
-	return user || false
 }
 
 export const actions = {
@@ -36,7 +18,7 @@ export const actions = {
 		const form = await superValidate(event, forgotPasswordSchema)
 
 		if (!form.valid) {
-			console.log('invalid formx')
+			console.log('invalid form: 1')
 			return fail(400, { form })
 		}
 

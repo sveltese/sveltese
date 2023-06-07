@@ -1,14 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit'
-import { z } from 'zod'
 import { message, superValidate } from 'sveltekit-superforms/server'
 import { auth } from '$lib/server/lucia'
-import { createHash, randomBytes } from 'node:crypto'
-
-const loginSchema = z.object({
-	email: z.string().email("Email doesn't look right."),
-	password: z.string().min(8, 'Password must be at least 8 characters.'),
-	remember: z.boolean().default(false).optional()
-})
+import { loginSchema } from '$lib/schemas'
+import { log } from 'node:console'
 
 export const load = async (event) => {
 	const form = await superValidate(event, loginSchema)
@@ -20,18 +14,27 @@ export const actions = {
 		const form = await superValidate(event, loginSchema)
 
 		if (!form.valid) {
+			log(2)
 			return fail(400, { form })
 		}
-
+		log(3)
 		try {
-			const email = form.data.email.toLocaleLowerCase()
-			const hash = await createHash('sha256').update(form.data?.password).digest('hex')
-			const key = await auth.useKey('email', email, hash)
+			const username = form.data.email
+			const password = form.data.password
+			log(username, password)
+			const key = await auth.useKey('email', username, password)
+			log(key)
 			const session = await auth.createSession(key.userId)
+			log(45, session)
+
+			log(46)
 			event.locals.auth.setSession(session)
+			log(47)
 		} catch (err) {
+			log(5)
 			return message(form, 'Login was unsuccessful.')
 		}
+		log(6)
 		throw redirect(303, '/dashboard')
 	}
 }

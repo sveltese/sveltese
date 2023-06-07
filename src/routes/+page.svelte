@@ -7,12 +7,12 @@
 	<a href="/register" class="text-gray-600 hover:text-gray-800 font-medium mr-4">Register</a>
 </nav>
 
-<div class="mx-auto sm:mt-64 content">
+<div class="mx-auto lg:mt-64 content">
 	<div class="flex justify-center items-center my-8">
 		<Logo />
 	</div>
 </div>
-<div class="mx-auto my-8 content">
+<div class=" lg:mx-28 my-8 content">
 	<div class="grid sm:grid-cols-2 grid-rows-2 gap-6 px-8">
 		<!-- Templates -->
 		<div class="bg-white shadow-md rounded-lg px-6 py-8">

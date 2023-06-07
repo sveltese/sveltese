@@ -5,29 +5,7 @@ import { auth } from '$lib/server/lucia'
 import { prisma } from '$lib/server/prisma'
 import { emailClient } from '$lib/server/email'
 import { createHash, randomBytes } from 'node:crypto'
-
-const registerSchema = z
-	.object({
-		name: z.string().min(2, 'Name must be at least 2 characters long.'),
-		email: z
-			.string()
-			.email("Email doesn't look right.")
-			.refine(async (email) => {
-				if (!email) return true
-				const existingEmail = await prisma.authUser.findUnique({
-					where: {
-						email: email
-					}
-				})
-				return existingEmail ? false : true
-			}, 'This email is already in our database.'),
-		password: z.string().min(8, 'Password must be at least 8 characters long.'),
-		confirmPassword: z.string().min(1, 'Please confirm your password.')
-	})
-	.refine((data) => data.password === data.confirmPassword, {
-		message: "Passwords don't match",
-		path: ['password']
-	})
+import { registerSchema } from '$lib/schemas'
 
 export const load = async (event) => {
 	const form = await superValidate(event, registerSchema)

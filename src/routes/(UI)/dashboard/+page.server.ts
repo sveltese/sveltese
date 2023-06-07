@@ -8,6 +8,8 @@ export const load = async (event) => {
 
 	const { user } = await event.locals.auth.validateUser()
 
+	console.log(user)
+
 	return {
 		user
 	}

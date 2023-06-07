@@ -16,6 +16,7 @@
 </div>
 
 <div class="card w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg px-6 py-4">
+	<SuperDebug data={form} />
 	<form method="POST" use:enhance>
 		<div>
 			<label class="block tracking-wide text-black text-sm mb-2" for="email"> Email </label>
@@ -47,6 +48,13 @@
 				<div class="mt-2">
 					<p class="text-sm text-red-600">
 						{$errors.password}
+					</p>
+				</div>
+			{/if}
+			{#if $message}
+				<div class="mt-2">
+					<p class="text-sm text-red-600">
+						{$message}
 					</p>
 				</div>
 			{/if}
